@@ -1,0 +1,97 @@
+name: msys2-build-action-workflow
+on:
+  push:
+    # # Sequence of patterns matched against refs/tags
+    # tags:
+    #   - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    #   - 'c*'
+      
+permissions:
+    contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    name: MinGW-w64
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - name: Setup MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        update: true
+        install: >-
+          git
+          make
+          base-devel
+          gcc
+          mingw-w64-x86_64-toolchain
+          mingw-w64-x86_64-yasm
+        pacboy: >-
+          toolchain:p
+          cmake:p
+          ninja:p
+          libunwind:p
+          
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        repository: 'didoudiaz/gprolog'
+        ref: 'v1.5.0'
+        path: 'gprolog'
+
+    - run: |
+        cp ${RUNNER_TEMP}/msys64/mingw64/bin/yasm.exe ${RUNNER_TEMP}/msys64/mingw64/bin/yasm-win64.exe
+      
+    - working-directory: ./gprolog
+      run: |
+        ./configure && \
+        make && \
+        make install && \
+        ls
+          
+
+
+    # - name: Set installation directory
+    #   id: set-installation-directory
+    #   run: |
+    #     echo "INSTALLATION_DIR=${RUNNER_TEMP}/msys64/mingw64" >> "$GITHUB_OUTPUT"
+
+    # - working-directory: '${{ steps.set-installation-directory.outputs.INSTALLATION_DIR }}'
+    #   name: Make Install
+    #   run: |
+    #     cat <<EOF > run.sh
+    #     #!/bin/bash
+    #     export GRC_BLOCKS_PATH="\$(pwd)/share/gnuradio/grc/blocks"
+    #     export PATH="\$PATH:\$(pwd)/bin"
+        
+    #     cd bin && \
+    #     \$(pwd)/python.exe gnuradio-companion.py
+    #     EOF
+
+    # # - run: |
+    # #     cp ${RUNNER_TEMP}/msys64/mingw64/bin/libgcc_s_seh-1.dll \
+    # #     ${RUNNER_TEMP}/msys64/mingw64/bin/libstdc++-6.dll \
+    # #     ${RUNNER_TEMP}/msys64/mingw64/bin/libboost_program_options-mt.dll \
+    # #     ${RUNNER_TEMP}/msys64/mingw64/bin/libwinpthread-1.dll \
+    # #     ${RUNNER_TEMP}/msys64/mingw64/bin/libboost_program_options-mt.dll \
+    # #     ${RUNNER_TEMP}/msys64/mingw64/bin/libfmt-11.dll \
+    # #     ${RUNNER_TEMP}/msys64/mingw64/bin/libboost_thread-mt.dll \
+    # #     ${RUNNER_TEMP}/msys64/mingw64/bin/libgmp-10.dll \
+    # #     ./gnuradio/cmake-build/cmake-installation/bin/
+        
+    # - name: Archive Release
+    #   uses: thedoctor0/zip-release@master
+    #   with:
+    #     type: 'zip'
+    #     directory: "${{ steps.set-installation-directory.outputs.INSTALLATION_DIR }}"
+    #     filename: "${{ github.event.repository.name }}-${{ github.ref_name }}.zip"
+        
+    # - name: Release prebuilt
+    #   uses: ncipollo/release-action@v1
+    #   with:
+    #     artifacts: "${{ steps.set-installation-directory.outputs.INSTALLATION_DIR }}/${{ github.event.repository.name }}-${{ github.ref_name }}.zip"
+    #     allowUpdates: true
+    #     token: ${{ secrets.GITHUB_TOKEN }}
