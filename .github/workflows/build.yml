@@ -47,6 +47,7 @@ jobs:
       
     - working-directory: 'gprolog/src'
       run: |
+        ./configure --help && \
         ./configure && \
         make && \
         make install && \
