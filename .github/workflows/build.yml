@@ -45,7 +45,7 @@ jobs:
     - run: |
         cp ${RUNNER_TEMP}/msys64/mingw64/bin/yasm.exe ${RUNNER_TEMP}/msys64/mingw64/bin/yasm-win64.exe
       
-    - working-directory: 'gprolog'
+    - working-directory: 'gprolog/src'
       run: |
         ./configure && \
         make && \
