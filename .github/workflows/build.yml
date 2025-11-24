@@ -48,7 +48,7 @@ jobs:
     - working-directory: 'gprolog/src'
       run: |
         ./configure --help && \
-        ./configure && \
+        ./configure --disable-linedit  --disable-piped-consult --disable-gui-console && \
         make && \
         make install && \
         ls
