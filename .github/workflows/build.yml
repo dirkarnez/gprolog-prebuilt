@@ -47,12 +47,13 @@ jobs:
 
     - run: |
         cp ${RUNNER_TEMP}/msys64/mingw64/bin/yasm.exe ${RUNNER_TEMP}/msys64/mingw64/bin/yasm-win64.exe
-      
+
+  #  --disable-linedit  --disable-piped-consult --disable-gui-console
     - working-directory: 'gprolog/src'
       run: |
         echo $PATH
         ./configure --help && \
-        ./configure --disable-linedit  --disable-piped-consult --disable-gui-console && \
+        ./configure && \
         make && \
         make install && \
         ls
