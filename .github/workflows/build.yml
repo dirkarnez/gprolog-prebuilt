@@ -12,6 +12,9 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      LINEDIT: 'gui=no'
+      MSYS2_PATH_TYPE: 'inherit'
     name: MinGW-w64
     defaults:
       run:
@@ -47,6 +50,7 @@ jobs:
       
     - working-directory: 'gprolog/src'
       run: |
+        echo $PATH
         ./configure --help && \
         ./configure --disable-linedit  --disable-piped-consult --disable-gui-console && \
         make && \
