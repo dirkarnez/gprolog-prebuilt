@@ -15,6 +15,7 @@ jobs:
     env:
       LINEDIT: 'gui=no'
       MSYS2_PATH_TYPE: 'inherit'
+      MSYSTEM: MINGW64
     name: MinGW-w64
     defaults:
       run:
@@ -48,12 +49,13 @@ jobs:
     - run: |
         cp ${RUNNER_TEMP}/msys64/mingw64/bin/yasm.exe ${RUNNER_TEMP}/msys64/mingw64/bin/yasm-win64.exe
 
-  #  --disable-linedit  --disable-piped-consult --disable-gui-console
+  #  --disable-linedit  --disable-piped-consult 
     - working-directory: 'gprolog/src'
       run: |
+        echo $MSYSTEM
         echo $PATH
         ./configure --help && \
-        ./configure && \
+        ./configure --disable-gui-console && \
         make && \
         make install && \
         ls
